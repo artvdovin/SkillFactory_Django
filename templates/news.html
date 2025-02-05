@@ -1,0 +1,23 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'default.html' %}
+{% load custom_tags %}
+{% load custom_filters %}
+
+{% block title %}
+News
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+
+<h1>Все новости</h1>
+
+
+<h3>Дата {% current_time '%b %d %Y' %} </h3>
+<br>
+{% for new in news %}
+    {{new.date_add|date:'d M Y'}}<h4> {{ new.title|censor }} </h4>
+    {{new.post|truncatechars:20|censor}}
+    <hr></hr>
+{% endfor %}
+{% endblock content %}

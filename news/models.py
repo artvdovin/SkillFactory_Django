@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your models here.
 class Author(models.Model):
@@ -50,6 +51,8 @@ class Post (models.Model):
 
     def preview(self):
            return f"{self.post[:124]}..." 
+    def get_absolute_url(self):
+        return reverse('new', args=[str(self.id)])
 
 class PostCategory (models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)

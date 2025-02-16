@@ -1,15 +1,85 @@
 from django.shortcuts import render
-from django.views.generic import ListView,DetailView
+from django.urls import reverse_lazy
+from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from .models import Post
+from .filters import PostFilter
+from .form import NewsForm
 # Create your views here.
 class News(ListView):
     model = Post
     ordering = '-date_add'
     template_name = 'news.html'
     context_object_name = 'news'
+    paginate_by = 1
 
 class NewsDetail (DetailView):
     model=Post
     template_name = 'new.html'
     context_object_name = 'new'
 
+class Search (ListView):
+    model = Post
+    ordering = '-date_add'
+    template_name = 'search.html'
+    context_object_name = 'news'
+    paginate_by = 2
+
+    def get_queryset(self):
+        # Получаем обычный запрос
+        queryset = super().get_queryset()
+        # Используем наш класс фильтрации.
+        # self.request.GET содержит объект QueryDict, который мы рассматривали
+        # в этом юните ранее.
+        # Сохраняем нашу фильтрацию в объекте класса,
+        # чтобы потом добавить в контекст и использовать в шаблоне.
+        self.filterset = PostFilter(self.request.GET, queryset)
+        # Возвращаем из функции отфильтрованный список товаров
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Добавляем в контекст объект фильтрации.
+        context['filterset'] = self.filterset
+        return context
+
+
+class NewsCreate (CreateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'news_create.html'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.categoryType = 'NW'
+        return super().form_valid(form)
+    
+
+class NewsEdit (UpdateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'news_create.html'
+
+
+class NewsDel (DeleteView):
+    model = Post
+    template_name = 'news_delete.html'
+    success_url = reverse_lazy ('news')    
+
+class ArticleCreate (CreateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'article_create.html'
+
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.categoryType = 'AR'
+        return super().form_valid(form)
+    
+class ArticleEdit (UpdateView):
+    model = Post
+    form_class = NewsForm
+    template_name = 'article_create.html'
+class ArticleDel (DeleteView):
+    model = Post
+    template_name = 'article_delete.html'
+    success_url = reverse_lazy ('news') 

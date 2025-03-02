@@ -12,6 +12,9 @@ News
 
 <h1>Все новости</h1>
 
+{% if is_not_premium %}
+<button> <a href="{% url 'upgrade' %}"> Хочу Premium!</a> </button>
+{% endif %}
 
 <h3>Дата {% current_time '%b %d %Y' %} </h3>
 <br>

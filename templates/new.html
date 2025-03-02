@@ -9,6 +9,7 @@
 
 <!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
 {% block content %}
+
 <h1>{{ new.title|censor }}</h1>
 {{ new.date_add|date:"d M Y"}}
 <h3>{{ new.post|censor}}</h3>

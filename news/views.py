@@ -1,16 +1,25 @@
 from django.shortcuts import render
+from django.contrib.auth.models import Group
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Post
 from .filters import PostFilter
 from .form import NewsForm
+from django.contrib.auth.decorators import login_required
+
 # Create your views here.
 class News(ListView):
     model = Post
     ordering = '-date_add'
     template_name = 'news.html'
     context_object_name = 'news'
-    paginate_by = 1
+    paginate_by = 10
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_premium'] = not self.request.user.groups.filter(name = 'authors').exists()
+        return context
 
 class NewsDetail (DetailView):
     model=Post
@@ -22,7 +31,7 @@ class Search (ListView):
     ordering = '-date_add'
     template_name = 'search.html'
     context_object_name = 'news'
-    paginate_by = 2
+    paginate_by = 10
 
     def get_queryset(self):
         # Получаем обычный запрос
@@ -43,7 +52,8 @@ class Search (ListView):
         return context
 
 
-class NewsCreate (CreateView):
+class NewsCreate (CreateView, PermissionRequiredMixin):
+    permission_required = ('news.add_post')
     model = Post
     form_class = NewsForm
     template_name = 'news_create.html'
@@ -54,10 +64,12 @@ class NewsCreate (CreateView):
         return super().form_valid(form)
     
 
-class NewsEdit (UpdateView):
+class NewsEdit (LoginRequiredMixin,UpdateView, PermissionRequiredMixin):
+    permission_required = ('news.change_post')
     model = Post
     form_class = NewsForm
     template_name = 'news_create.html'
+    
 
 
 class NewsDel (DeleteView):
@@ -83,3 +95,12 @@ class ArticleDel (DeleteView):
     model = Post
     template_name = 'article_delete.html'
     success_url = reverse_lazy ('news') 
+
+@login_required
+def upgrade_me(request):
+    user = request.user
+    premium_group = Group.objects.get(name='authors')
+    
+    if not request.user.groups.filter(name='authors').exists():
+        premium_group.user_set.add(user)
+    return redirect('/new/')

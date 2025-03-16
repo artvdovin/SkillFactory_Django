@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.db.models.query import QuerySet
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.models import Group
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView,DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Post
+from .models import Post, Category
 from .filters import PostFilter
 from .form import NewsForm
 from django.contrib.auth.decorators import login_required
@@ -104,3 +105,32 @@ def upgrade_me(request):
     if not request.user.groups.filter(name='authors').exists():
         premium_group.user_set.add(user)
     return redirect('/new/')
+
+
+class CategoryListNew(News):
+    model = Post
+    template_name = 'category_list.html'
+    context_object_name = "category_news_list"
+
+    def get_queryset(self):
+        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(postCategory = self.category).order_by('-date_add')
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context ['is_not_subscribe'] = self.request.user not in self.category.subscribers.all()
+        context['category'] = self.category
+        return context
+    
+
+@login_required
+def subscribe(request,pk):
+    user = request.user
+    category = Category.objects.get(id=pk) 
+    category.subscribers.add(user)
+
+    messange = 'Вы успешно подписались на рассылку новостей категории'
+    return render(request, 'subscribe.html', {'category':category,'messange':messange})       
+
+        

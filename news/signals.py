@@ -3,6 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.db.models.signals import m2m_changed
 from django.dispatch import receiver
 from django.template.loader import render_to_string
+from .tasks import send_notifications
 
 from django.conf import settings
 
@@ -39,4 +40,5 @@ def post_created(instance, sender, **kwargs):
             subscribers_emails += [s.email for s in subscribers]
           
 
-        send_notifications(instance.preview(), instance.pk, instance.title, subscribers_emails)        
+        #send_notifications(instance.preview(), instance.pk, instance.title, subscribers_emails)      
+        send_notifications.delay(instance.preview(), instance.pk, instance.title, subscribers_emails)  

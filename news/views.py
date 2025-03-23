@@ -10,7 +10,17 @@ from .filters import PostFilter
 from .form import NewsForm
 from django.contrib.auth.decorators import login_required
 
+
+from django.http import HttpResponse
+from django.views import View
+
+
 # Create your views here.
+
+
+
+
+
 class News(ListView):
     model = Post
     ordering = '-date_add'

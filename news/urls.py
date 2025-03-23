@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданное нами представление
-from .views import News,NewsDetail, Search, NewsCreate, NewsEdit,NewsDel, ArticleCreate, ArticleEdit, ArticleDel,upgrade_me, CategoryListNew, subscribe, IndexView
+from .views import News,NewsDetail, Search, NewsCreate, NewsEdit,NewsDel, ArticleCreate, ArticleEdit, ArticleDel,upgrade_me, CategoryListNew, subscribe
 
 
 urlpatterns = [

@@ -1,0 +1,60 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'default.html' %}
+{% load custom_tags %}
+{% load custom_filters %}
+
+{% block title %}
+News
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
+{% block content %}
+
+<h1>Все новости</h1>
+
+{% if is_not_subscribe %}
+    <button><a href="{% url 'subscribe' category.id %}">Подписаться</a></button>
+{% endif %}
+{% if is_not_premium %}
+<button> <a href="{% url 'upgrade' %}"> Хочу автором!</a> </button>
+{% endif %}
+
+
+
+<h3>Дата {% current_time '%b %d %Y' %} </h3>
+<br>
+{% for new in category_news_list %}
+    {{new.date_add|date:'d M Y'}}
+    {% for category in new.postCategory.all %}
+        <p><a href="{% url 'category_list' category.id %}">{{category}}</a></p>
+    {%endfor%}
+    <h4> {{ new.title|censor }} </h4>
+
+    {{new.post|truncatechars:20|censor}}
+    <hr></hr>
+{% endfor %}
+
+
+
+
+
+{# Информация о предыдущих страницах #}
+{% if page_obj.has_previous %}
+    {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+    <a href="?{% url_replace page=1 %}">1</a>
+    {% if page_obj.previous_page_number != 1 %}
+        ...
+        <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+    {% endif %}
+{% endif %}
+
+{{ page_obj.number }}
+
+{% if page_obj.has_next %}
+    <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+    {% if paginator.num_pages != page_obj.next_page_number %}
+        ...
+        <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+    {% endif %}
+{% endif %}
+{% endblock content %}

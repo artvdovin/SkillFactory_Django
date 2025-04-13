@@ -1,7 +1,0 @@
-13.04.2025 11-32-31 WARNING E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\utils\log.py None Not Found: / 
-13.04.2025 11-32-31 WARNING E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\core\servers\basehttp.py None "GET / HTTP/1.1" 404 2460 
-13.04.2025 11-33-07 INFO E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\core\servers\basehttp.py None "GET /news HTTP/1.1" 301 0 
-13.04.2025 11-33-08 INFO E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\core\servers\basehttp.py None "GET /news/ HTTP/1.1" 200 3898 
-13.04.2025 11-33-08 INFO E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\core\servers\basehttp.py None "GET /static/css/styles.css HTTP/1.1" 200 236765 
-13.04.2025 11-33-08 WARNING E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\utils\log.py None Not Found: /news/assets/favicon.ico 
-13.04.2025 11-33-08 WARNING E:\Piton\SkillFactory\lesson2\venv\lib\site-packages\django\core\servers\basehttp.py None "GET /news/assets/favicon.ico HTTP/1.1" 404 5666 
